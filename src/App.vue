@@ -1,11 +1,18 @@
+<!-- 2:14 -->
+
 <script setup>
 import TheHeader from './components/TheHeader.vue'
+import CardList from './components/CardList.vue'
 </script>
 
 <template>
-  <div class="bg-white h-screen w-4/5 m-auto rounded-xl shadow-2xl mt-14">
+  <div class="bg-white w-4/5 m-auto rounded-xl shadow-2xl mt-14">
     <TheHeader />
 
-    <h1>vue-sneakers</h1>
+    <div class="p-10">
+      <h2 class="text-3xl font-bold mb-10">All sneakers</h2>
+
+      <CardList />
+    </div>
   </div>
 </template>
