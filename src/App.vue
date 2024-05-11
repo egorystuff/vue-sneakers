@@ -1,11 +1,14 @@
-<!-- 2:14 -->
+<!-- 2:47 -->
 
 <script setup>
 import TheHeader from './components/TheHeader.vue'
 import CardList from './components/CardList.vue'
+import TheDrawer from './components/TheDrawer.vue'
 </script>
 
 <template>
+  <!-- <TheDrawer /> -->
+
   <div class="bg-white w-4/5 m-auto rounded-xl shadow-2xl mt-14">
     <TheHeader />
 
