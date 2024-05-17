@@ -20,7 +20,7 @@ defineProps({
       :src="isFavorite ? ' /like-2.svg' : '/like-1.svg '"
       alt="like-1"
     />
-    <img :src="imageUrl" alt="sneakers-1" />
+    <img class="w-3/4" :src="imageUrl" alt="sneakers-1" />
     <p class="mt-2">{{ title }}</p>
     <div class="flex justify-between mt-5">
       <div class="flex flex-col">
