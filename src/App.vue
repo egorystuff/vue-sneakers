@@ -1,4 +1,4 @@
-<!-- 3.20 -->
+<!-- 3.55 -->
 
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -10,33 +10,48 @@ import TheDrawer from './components/TheDrawer.vue'
 const items = ref([])
 
 const filters = reactive({
-  sortBy: '',
+  sortBy: 'title',
   searchQuery: ''
-})
-
-onMounted(async () => {
-  try {
-    const { data } = await axios.get('https://bd1bfdbaf3f110ab.mokky.dev/items')
-    items.value = data
-  } catch (error) {
-    console.error(error)
-  }
-})
-
-watch(filters, async () => {
-  try {
-    const { data } = await axios.get(
-      'https://bd1bfdbaf3f110ab.mokky.dev/items?sortBy=' + filters.sortBy
-    )
-    items.value = data
-  } catch (error) {
-    console.error(error)
-  }
 })
 
 const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
 }
+
+const onChangeSearchInput = (event) => {
+  filters.searchQuery = event.target.value
+}
+
+// функция для получения данных с закладочкой
+const fetchFavorites = async () => {
+  try {
+    const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
+    items.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// функция для получения данных
+const fetchItems = async () => {
+  try {
+    const params = {
+      sortBy: filters.sortBy
+    }
+
+    if (filters.searchQuery) {
+      params.title = `*${filters.searchQuery}*`
+    }
+
+    const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/items`, { params })
+    items.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(fetchItems)
+watch(filters, fetchItems)
 </script>
 
 <template>
@@ -63,6 +78,7 @@ const onChangeSelect = (event) => {
           <div class="relative">
             <img class="absolute left-6 top-3" src="/search.svg" alt="search" />
             <input
+              @input="onChangeSearchInput"
               class="border-2 border-slate-300 rounded-xl pr-4 pl-12 py-2 outline-none focus:border-slate-400"
               type="text"
               placeholder="Search..."
