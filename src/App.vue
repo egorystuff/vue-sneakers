@@ -1,4 +1,4 @@
-<!-- 3.55 -->
+<!-- 4.32 -->
 
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -25,11 +25,23 @@ const onChangeSearchInput = (event) => {
 // функция для получения данных с закладочкой
 const fetchFavorites = async () => {
   try {
-    const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
-    items.value = data
+    const { data: favorites } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find((favorite) => favorite.parentId === item.id)
+
+      if (!favorite) return item
+
+      return { ...item, isFavorite: true, favoriteId: favorite.id }
+    })
   } catch (error) {
     console.error(error)
   }
+}
+
+const addToFavorite = async (item) => {
+  item.isFavorite = !item.isFavorite
+
+  console.log(item)
 }
 
 // функция для получения данных
@@ -44,13 +56,16 @@ const fetchItems = async () => {
     }
 
     const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/items`, { params })
-    items.value = data
+    items.value = data.map((item) => ({ ...item, isFavorite: false, isAdded: false }))
   } catch (error) {
     console.error(error)
   }
 }
 
-onMounted(fetchItems)
+onMounted(async () => {
+  await fetchItems()
+  await fetchFavorites()
+})
 watch(filters, fetchItems)
 </script>
 
@@ -87,7 +102,7 @@ watch(filters, fetchItems)
         </div>
       </div>
 
-      <CardList :items="items" />
+      <CardList :items="items" @add-to-favorite="addToFavorite" />
     </div>
   </div>
 </template>
