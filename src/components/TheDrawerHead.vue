@@ -1,5 +1,11 @@
+<script setup>
+import { inject } from 'vue'
+
+const { closeDrawer } = inject('cartActions')
+</script>
+
 <template>
-  <div class="flex items-center gap-4 mb-8">
+  <div @click="closeDrawer" class="flex items-center gap-4 mb-8">
     <img
       class="w-5 opacity-50 cursor-pointer rotate-180 transition hover:opacity-100 hover:scale-110 active:scale-100"
       src="/arrow-next.svg"
