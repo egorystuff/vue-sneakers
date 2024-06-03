@@ -1,4 +1,4 @@
-<!-- 5.08 -->
+<!-- 5.19 -->
 
 <script setup>
 import { onMounted, provide, reactive, ref, watch } from 'vue'
@@ -53,12 +53,20 @@ const fetchFavorites = async () => {
 // -----------------------------------------------------------------------------------------------
 
 const addToCartBasket = (item) => {
+  cartBasket.value.push(item)
+  item.isAdded = true
+}
+
+const removeFromCartBasket = (item) => {
+  cartBasket.value.splice(cartBasket.value.indexOf(item), 1)
+  item.isAdded = false
+}
+
+const onClickAddCartBasket = (item) => {
   if (!item.isAdded) {
-    cartBasket.value.push(item)
-    item.isAdded = true
+    addToCartBasket(item)
   } else {
-    cartBasket.value.splice(cartBasket.value.indexOf(item), 1)
-    item.isAdded = false
+    removeFromCartBasket(item)
   }
   console.log(cartBasket.value)
 }
@@ -112,7 +120,7 @@ onMounted(async () => {
 
 watch(filters, fetchItems)
 
-provide('cartActions', { closeDrawer, openDrawer })
+provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFromCartBasket })
 </script>
 
 <template>
@@ -148,7 +156,11 @@ provide('cartActions', { closeDrawer, openDrawer })
         </div>
       </div>
 
-      <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="addToCartBasket" />
+      <CardList
+        :items="items"
+        @add-to-favorite="addToFavorite"
+        @add-to-cart="onClickAddCartBasket"
+      />
     </div>
   </div>
 </template>

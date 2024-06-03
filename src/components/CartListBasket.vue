@@ -1,17 +1,19 @@
 <script setup>
+import { inject } from 'vue'
 import CartItemBasket from './CartItemBasket.vue'
+
+const { cartBasket, removeFromCartBasket } = inject('cart')
 </script>
 
 <template>
   <div class="flex flex-col gap-5">
     <CartItemBasket
-      image-url="/sneakers/sneakers-1.jpg"
-      title="Sneakers1"
-      :price="100"
-      :is-added="true"
-      :is-favorite="true"
+      v-for="item in cartBasket"
+      :key="item.id"
+      :title="item.title"
+      :price="item.price"
+      :image-url="item.imageUrl"
+      @on-click-remove="() => removeFromCartBasket(item)"
     />
-    <CartItemBasket image-url="/sneakers/sneakers-2.jpg" title="Sneakers2" :price="50" />
-    <CartItemBasket image-url="/sneakers/sneakers-3.jpg" title="Sneakers3" :price="70" />
   </div>
 </template>
