@@ -1,7 +1,7 @@
-<!-- 5.19 -->
+<!-- 5.43 -->
 
 <script setup>
-import { onMounted, provide, reactive, ref, watch } from 'vue'
+import { computed, onMounted, provide, reactive, ref, watch } from 'vue'
 import axios from 'axios'
 import TheHeader from './components/TheHeader.vue'
 import CardList from './components/CardList.vue'
@@ -12,6 +12,10 @@ import TheDrawer from './components/TheDrawer.vue'
 const items = ref([])
 const drawerOpen = ref(false)
 const cartBasket = ref([])
+const isCreatingOrder = ref(false)
+const totalPrice = computed(() => cartBasket.value.reduce((acc, item) => acc + item.price, 0))
+
+// -----------------------------------------------------------------------------------------------
 
 const closeDrawer = () => {
   drawerOpen.value = false
@@ -33,24 +37,6 @@ const onChangeSelect = (event) => {
 const onChangeSearchInput = (event) => {
   filters.searchQuery = event.target.value
 }
-// -----------------------------------------------------------------------------------------------
-// функция для получения данных с закладочкой
-const fetchFavorites = async () => {
-  try {
-    const { data: favorites } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
-    items.value = items.value.map((item) => {
-      const favorite = favorites.find((favorite) => favorite.parentId === item.id)
-
-      if (!favorite) return item
-
-      return { ...item, isFavorite: true, favoriteId: favorite.id }
-    })
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
 
 const addToCartBasket = (item) => {
   cartBasket.value.push(item)
@@ -71,8 +57,6 @@ const onClickAddCartBasket = (item) => {
   console.log(cartBasket.value)
 }
 
-// -----------------------------------------------------------------------------------------------
-
 const addToFavorite = async (item) => {
   try {
     if (!item.isFavorite) {
@@ -87,6 +71,42 @@ const addToFavorite = async (item) => {
     }
   } catch (error) {
     console.error(error)
+  }
+}
+
+// -----------------------------------------------------------------------------------------------
+// функция для получения данных с закладочкой
+const fetchFavorites = async () => {
+  try {
+    const { data: favorites } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find((favorite) => favorite.parentId === item.id)
+
+      if (!favorite) return item
+
+      return { ...item, isFavorite: true, favoriteId: favorite.id }
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// -----------------------------------------------------------------------------------------------
+// функция для создания заказа
+const createOrder = async () => {
+  isCreatingOrder.value = true
+  try {
+    const { data } = await axios.post(`https://bd1bfdbaf3f110ab.mokky.dev/orders`, {
+      items: cartBasket.value,
+      totalPrice: totalPrice.value
+    })
+    cartBasket.value = []
+
+    return data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isCreatingOrder.value = false
   }
 }
 
@@ -124,10 +144,15 @@ provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFr
 </script>
 
 <template>
-  <TheDrawer v-if="drawerOpen" />
+  <TheDrawer
+    v-if="drawerOpen"
+    :total-price="totalPrice"
+    :is-creating-order="isCreatingOrder"
+    @create-order="createOrder"
+  />
 
   <div class="bg-white w-4/5 m-auto rounded-xl shadow-2xl mt-14">
-    <TheHeader @open-drawer="openDrawer" />
+    <TheHeader :total-price="totalPrice" @open-drawer="openDrawer" />
 
     <div class="p-10">
       <div class="flex justify-between items-center mb-10">

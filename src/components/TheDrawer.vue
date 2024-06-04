@@ -1,6 +1,16 @@
 <script setup>
+import { computed } from 'vue'
 import CartListBasket from './CartListBasket.vue'
 import TheDrawerHead from './TheDrawerHead.vue'
+
+const props = defineProps({
+  totalPrice: Number,
+  isCreatingOrder: Boolean
+})
+
+const emit = defineEmits(['createOrder'])
+
+const buttonDisabled = computed(() => (props.isCreatingOrder.value ? true : false))
 </script>
 
 <template>
@@ -14,17 +24,18 @@ import TheDrawerHead from './TheDrawerHead.vue'
       <div class="flex gap-4">
         <span>Total:</span>
         <div class="flex-1 border-b-2 border-dashed"></div>
-        <b>700$</b>
+        <b>{{ totalPrice }} $</b>
       </div>
 
       <div class="flex gap-4">
         <span> Tax 5%:</span>
         <div class="flex-1 border-b-2 border-dashed"></div>
-        <b>63$</b>
+        <b>{{ Math.round(totalPrice * 0.05) }} $</b>
       </div>
 
       <button
-        disabled=""
+        @click="emit('createOrder')"
+        :disabled="totalPrice ? false : true"
         class="bg-lime-500 rounded-xl text-white w-full p-3 mt-5 disabled:bg-slate-300 opacity-70 hover:opacity-100 transition hover:scale-105 active:scale-100"
       >
         Checkout
