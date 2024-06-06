@@ -1,16 +1,14 @@
 <script setup>
-import { computed } from 'vue'
 import CartListBasket from './CartListBasket.vue'
 import TheDrawerHead from './TheDrawerHead.vue'
+import InfoBlock from './InfoBlock.vue'
 
-const props = defineProps({
+defineProps({
   totalPrice: Number,
-  isCreatingOrder: Boolean
+  disabledButton: Boolean
 })
 
 const emit = defineEmits(['createOrder'])
-
-const buttonDisabled = computed(() => (props.isCreatingOrder.value ? true : false))
 </script>
 
 <template>
@@ -18,9 +16,16 @@ const buttonDisabled = computed(() => (props.isCreatingOrder.value ? true : fals
   <div class="fixed top-0 right-0 bg-white w-1/3 h-full z-20 p-8">
     <TheDrawerHead />
 
-    <CartListBasket />
+    <CartListBasket v-if="totalPrice" />
 
-    <div class="flex flex-col gap-4 mt-10">
+    <InfoBlock
+      v-if="!totalPrice"
+      title="Cart is empty"
+      description="Please add some products"
+      image-url="/package-icon.png"
+    />
+
+    <div v-if="totalPrice" class="flex flex-col gap-4 mt-10">
       <div class="flex gap-4">
         <span>Total:</span>
         <div class="flex-1 border-b-2 border-dashed"></div>
@@ -35,7 +40,7 @@ const buttonDisabled = computed(() => (props.isCreatingOrder.value ? true : fals
 
       <button
         @click="emit('createOrder')"
-        :disabled="totalPrice ? false : true"
+        :disabled="disabledButton"
         class="bg-lime-500 rounded-xl text-white w-full p-3 mt-5 disabled:bg-slate-300 opacity-70 hover:opacity-100 transition hover:scale-105 active:scale-100"
       >
         Checkout

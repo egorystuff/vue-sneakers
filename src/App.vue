@@ -14,6 +14,8 @@ const drawerOpen = ref(false)
 const cartBasket = ref([])
 const isCreatingOrder = ref(false)
 const totalPrice = computed(() => cartBasket.value.reduce((acc, item) => acc + item.price, 0))
+const cartIsEmpty = computed(() => cartBasket.value.length === 0)
+const cartButtonDisabled = computed(() => isCreatingOrder.value || cartIsEmpty.value)
 
 // -----------------------------------------------------------------------------------------------
 
@@ -140,19 +142,36 @@ onMounted(async () => {
 
 watch(filters, fetchItems)
 
+watch(cartBasket, () => {
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: false
+  }))
+})
+
 provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFromCartBasket })
 </script>
 
 <template>
-  <TheDrawer
-    v-if="drawerOpen"
-    :total-price="totalPrice"
-    :is-creating-order="isCreatingOrder"
-    @create-order="createOrder"
-  />
-
   <div class="bg-white w-4/5 m-auto rounded-xl shadow-2xl mt-14">
     <TheHeader :total-price="totalPrice" @open-drawer="openDrawer" />
+
+    <Transition
+      appear
+      enter-active-class="ease-out duration-200"
+      enter-from-class="opacity-0 "
+      enter-to-class=" opacity-100 "
+      leave-active-class="ease-in duration-100"
+      leave-from-class="opacity-100 "
+      leave-to-class="opacity-0 "
+    >
+      <TheDrawer
+        v-if="drawerOpen"
+        :total-price="totalPrice"
+        :disabled-button="cartButtonDisabled"
+        @create-order="createOrder"
+      />
+    </Transition>
 
     <div class="p-10">
       <div class="flex justify-between items-center mb-10">
