@@ -93,7 +93,6 @@ const fetchFavorites = async () => {
   }
 }
 
-// -----------------------------------------------------------------------------------------------
 // функция для создания заказа
 const createOrder = async () => {
   isCreatingOrder.value = true
@@ -112,7 +111,6 @@ const createOrder = async () => {
   }
 }
 
-// -----------------------------------------------------------------------------------------------
 // функция для получения данных
 const fetchItems = async () => {
   try {
@@ -136,8 +134,15 @@ const fetchItems = async () => {
 // -----------------------------------------------------------------------------------------------
 
 onMounted(async () => {
+  cartBasket.value = JSON.parse(localStorage.getItem('cart') || '[]')
+
   await fetchItems()
   await fetchFavorites()
+
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: cartBasket.value.some((cartItem) => cartItem.id === item.id)
+  }))
 })
 
 watch(filters, fetchItems)
@@ -149,6 +154,14 @@ watch(cartBasket, () => {
   }))
 })
 
+watch(
+  cartBasket,
+  () => {
+    localStorage.setItem('cart', JSON.stringify(cartBasket.value))
+  },
+  { deep: true }
+)
+
 provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFromCartBasket })
 </script>
 
@@ -158,10 +171,10 @@ provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFr
 
     <Transition
       appear
-      enter-active-class="ease-out duration-200"
+      enter-active-class="ease-out duration-300"
       enter-from-class="opacity-0 "
       enter-to-class=" opacity-100 "
-      leave-active-class="ease-in duration-100"
+      leave-active-class="ease-in duration-200"
       leave-from-class="opacity-100 "
       leave-to-class="opacity-0 "
     >
