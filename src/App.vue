@@ -89,7 +89,6 @@ provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFr
     </Transition>
 
     <div class="p-10">
-      <!-- <TheHome /> -->
       <RouterView />
     </div>
   </div>
