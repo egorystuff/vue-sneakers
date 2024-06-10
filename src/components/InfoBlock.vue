@@ -19,7 +19,6 @@ const { closeDrawer } = inject('cart')
 
   <button
     @click="closeDrawer"
-    :disabled="disabledButton"
     class="bg-lime-500 rounded-xl text-white w-full p-3 mt-10 disabled:bg-slate-300 opacity-70 hover:opacity-100 transition hover:scale-105 active:scale-100"
   >
     Go to home

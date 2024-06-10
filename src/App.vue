@@ -1,4 +1,4 @@
-<!-- 7.02 -->
+<!-- 7.19 -->
 
 <script setup>
 import { computed, provide, ref, watch } from 'vue'
@@ -10,10 +10,7 @@ import TheDrawer from './components/TheDrawer.vue'
 
 const drawerOpen = ref(false)
 const cartBasket = ref([])
-const isCreatingOrder = ref(false)
 const totalPrice = computed(() => cartBasket.value.reduce((acc, item) => acc + item.price, 0))
-const cartIsEmpty = computed(() => cartBasket.value.length === 0)
-const cartButtonDisabled = computed(() => isCreatingOrder.value || cartIsEmpty.value)
 
 // -----------------------------------------------------------------------------------------------
 
@@ -35,24 +32,33 @@ const removeFromCartBasket = (item) => {
   item.isAdded = false
 }
 
-// -----------------------------------------------------------------------------------------------
-// функция для создания заказа
-const createOrder = async () => {
-  isCreatingOrder.value = true
-  try {
-    const { data } = await axios.post(`https://bd1bfdbaf3f110ab.mokky.dev/orders`, {
-      items: cartBasket.value,
-      totalPrice: totalPrice.value
-    })
-    cartBasket.value = []
-
-    return data
-  } catch (error) {
-    console.error(error)
-  } finally {
-    isCreatingOrder.value = false
+const onClickAddCartBasket = (item) => {
+  if (!item.isAdded) {
+    addToCartBasket(item)
+  } else {
+    removeFromCartBasket(item)
   }
 }
+
+const addToFavorite = async (item) => {
+  try {
+    if (!item.isFavorite) {
+      item.isFavorite = true
+      const obj = { item_id: item.id }
+      const { data } = await axios.post(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`, obj)
+      item.favoriteId = data.id
+    } else {
+      item.isFavorite = false
+      await axios.delete(`https://bd1bfdbaf3f110ab.mokky.dev/favorites/${item.favoriteId}`)
+      item.favoriteId = null
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// -----------------------------------------------------------------------------------------------
+// функция для создания заказа
 
 // -----------------------------------------------------------------------------------------------
 
@@ -64,7 +70,9 @@ watch(
   { deep: true }
 )
 
-provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFromCartBasket })
+// -----------------------------------------------------------------------------------------------
+
+provide('cart', { cartBasket, closeDrawer, openDrawer, onClickAddCartBasket, addToFavorite })
 </script>
 
 <template>
@@ -80,12 +88,7 @@ provide('cart', { cartBasket, closeDrawer, openDrawer, addToCartBasket, removeFr
       leave-from-class="opacity-100 "
       leave-to-class="opacity-0 "
     >
-      <TheDrawer
-        v-if="drawerOpen"
-        :total-price="totalPrice"
-        :disabled-button="cartButtonDisabled"
-        @create-order="createOrder"
-      />
+      <TheDrawer v-if="drawerOpen" :total-price="totalPrice" />
     </Transition>
 
     <div class="p-10">

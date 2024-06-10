@@ -1,7 +1,9 @@
 <script setup>
 import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import CardList from '@/components/CardList.vue'
+
+const { onClickAddCartBasket } = inject('cart')
 
 const favorites = ref([])
 
@@ -18,6 +20,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>The favorites</h1>
-  <CardList :items="favorites" is-favorites />
+  <h2 class="text-3xl font-bold">All favorites</h2>
+  <CardList :items="favorites" is-favorites @add-to-cart="onClickAddCartBasket" />
 </template>

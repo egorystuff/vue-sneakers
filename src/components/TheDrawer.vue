@@ -1,14 +1,36 @@
 <script setup>
+import { computed, inject, ref } from 'vue'
+import axios from 'axios'
 import CartListBasket from './CartListBasket.vue'
 import TheDrawerHead from './TheDrawerHead.vue'
 import InfoBlock from './InfoBlock.vue'
 
-defineProps({
-  totalPrice: Number,
-  disabledButton: Boolean
+const props = defineProps({
+  totalPrice: Number
 })
 
-const emit = defineEmits(['createOrder'])
+const { cartBasket } = inject('cart')
+
+const isCreatingOrder = ref(false)
+const cartIsEmpty = computed(() => cartBasket.value.length === 0)
+const cartButtonDisabled = computed(() => isCreatingOrder.value || cartIsEmpty.value)
+
+const createOrder = async () => {
+  isCreatingOrder.value = true
+  try {
+    const { data } = await axios.post(`https://bd1bfdbaf3f110ab.mokky.dev/orders`, {
+      items: cartBasket.value,
+      totalPrice: props.totalPrice.value
+    })
+    cartBasket.value = []
+
+    return data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isCreatingOrder.value = false
+  }
+}
 </script>
 
 <template>
@@ -38,8 +60,8 @@ const emit = defineEmits(['createOrder'])
       </div>
 
       <button
-        @click="emit('createOrder')"
-        :disabled="disabledButton"
+        @click="createOrder"
+        :disabled="cartButtonDisabled"
         class="bg-lime-500 rounded-xl text-white w-full p-3 mt-5 disabled:bg-slate-300 opacity-70 hover:opacity-100 transition hover:scale-105 active:scale-100"
       >
         Checkout

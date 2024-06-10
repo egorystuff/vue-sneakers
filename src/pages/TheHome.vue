@@ -1,12 +1,11 @@
 <script setup>
 import axios from 'axios'
 import { inject, onMounted, reactive, ref, watch } from 'vue'
-import { addToFavorite } from '@/functions'
 import CardList from '../components/CardList.vue'
 
 // -----------------------------------------------------------------------------------------------
 
-const { addToCartBasket, removeFromCartBasket, cartBasket } = inject('cart')
+const { onClickAddCartBasket, cartBasket, addToFavorite } = inject('cart')
 const items = ref([])
 
 const filters = reactive({
@@ -21,14 +20,6 @@ const onChangeSelect = (event) => {
 
 const onChangeSearchInput = (event) => {
   filters.searchQuery = event.target.value
-}
-
-const onClickAddCartBasket = (item) => {
-  if (!item.isAdded) {
-    addToCartBasket(item)
-  } else {
-    removeFromCartBasket(item)
-  }
 }
 
 // -----------------------------------------------------------------------------------------------
