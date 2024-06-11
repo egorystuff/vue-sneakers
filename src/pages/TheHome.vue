@@ -1,6 +1,13 @@
 <script setup>
 import { inject, onMounted, watch } from 'vue'
-import { fetchFavorites, fetchItems, filters, items } from '@/items'
+import {
+  fetchFavorites,
+  fetchItems,
+  filters,
+  items,
+  onChangeSelect,
+  onChangeSearchInput
+} from '@/items'
 import CardList from '../components/CardList.vue'
 
 // -----------------------------------------------------------------------------------------------

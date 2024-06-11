@@ -42,6 +42,8 @@ export const fetchItems = async () => {
       params.title = `*${filters.searchQuery}*`
     }
 
+    const { data: favorites } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
+
     const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/items`, { params })
     items.value = data.map((item) => ({
       ...item,
@@ -49,6 +51,8 @@ export const fetchItems = async () => {
       favoriteId: null,
       isAdded: false
     }))
+
+    console.log(favorites)
   } catch (error) {
     console.error(error)
   }
