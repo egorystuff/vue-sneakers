@@ -1,63 +1,12 @@
 <script setup>
-import axios from 'axios'
-import { inject, onMounted, reactive, ref, watch } from 'vue'
+import { inject, onMounted, watch } from 'vue'
+import { fetchFavorites, fetchItems, filters, items } from '@/items'
 import CardList from '../components/CardList.vue'
 
 // -----------------------------------------------------------------------------------------------
 
 const { onClickAddCartBasket, cartBasket, addToFavorite } = inject('cart')
-const items = ref([])
 
-const filters = reactive({
-  sortBy: 'title',
-  searchQuery: ''
-})
-// -----------------------------------------------------------------------------------------------
-
-const onChangeSelect = (event) => {
-  filters.sortBy = event.target.value
-}
-
-const onChangeSearchInput = (event) => {
-  filters.searchQuery = event.target.value
-}
-
-// -----------------------------------------------------------------------------------------------
-// функция для получения данных с закладочкой
-const fetchFavorites = async () => {
-  try {
-    const { data: favorites } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
-    items.value = items.value.map((item) => {
-      const favorite = favorites.find((favorite) => favorite.item_id === item.id)
-
-      if (!favorite) return item
-
-      return { ...item, isFavorite: true, favoriteId: favorite.id }
-    })
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-// функция для получения данных
-const fetchItems = async () => {
-  try {
-    const params = { sortBy: filters.sortBy }
-    if (filters.searchQuery) {
-      params.title = `*${filters.searchQuery}*`
-    }
-
-    const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/items`, { params })
-    items.value = data.map((item) => ({
-      ...item,
-      isFavorite: false,
-      favoriteId: null,
-      isAdded: false
-    }))
-  } catch (error) {
-    console.error(error)
-  }
-}
 // -----------------------------------------------------------------------------------------------
 
 onMounted(async () => {

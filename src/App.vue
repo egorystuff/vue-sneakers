@@ -1,5 +1,3 @@
-<!-- 7.19 -->
-
 <script setup>
 import { computed, provide, ref, watch } from 'vue'
 import axios from 'axios'
@@ -82,11 +80,11 @@ provide('cart', { cartBasket, closeDrawer, openDrawer, onClickAddCartBasket, add
     <Transition
       appear
       enter-active-class="ease-out duration-300"
-      enter-from-class="opacity-0 "
-      enter-to-class=" opacity-100 "
+      enter-from-class="opacity-0"
+      enter-to-class=" opacity-100"
       leave-active-class="ease-in duration-200"
-      leave-from-class="opacity-100 "
-      leave-to-class="opacity-0 "
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
       <TheDrawer v-if="drawerOpen" :total-price="totalPrice" />
     </Transition>

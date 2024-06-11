@@ -12,6 +12,7 @@ const props = defineProps({
 const { cartBasket } = inject('cart')
 
 const isCreatingOrder = ref(false)
+const orderId = ref(null)
 const cartIsEmpty = computed(() => cartBasket.value.length === 0)
 const cartButtonDisabled = computed(() => isCreatingOrder.value || cartIsEmpty.value)
 
@@ -24,7 +25,7 @@ const createOrder = async () => {
     })
     cartBasket.value = []
 
-    return data
+    orderId.value = data.id
   } catch (error) {
     console.error(error)
   } finally {
@@ -35,18 +36,29 @@ const createOrder = async () => {
 
 <template>
   <div class="fixed top-0 right-0 bg-white w-1/3 h-full z-20 p-8">
+    <div class="fixed top-0 left-0 h-full w-2/3 bg-black z-10 opacity-70"></div>
+
     <TheDrawerHead />
 
-    <CartListBasket v-if="totalPrice" />
+    <div v-if="!totalPrice || orderId" class="w-1/2 m-auto">
+      <InfoBlock
+        v-if="!totalPrice && !orderId"
+        title="Cart is empty"
+        description="Please add some products"
+        image-url="/package-icon.png"
+      />
 
-    <InfoBlock
-      v-if="!totalPrice"
-      title="Cart is empty"
-      description="Please add some products"
-      image-url="/package-icon.png"
-    />
+      <InfoBlock
+        v-if="orderId"
+        title="Order is processed"
+        :description="`Your order ${orderId} will soon be transferred to courier delivery.`"
+        image-url="/order-success-icon.png"
+      />
+    </div>
 
-    <div v-if="totalPrice" class="flex flex-col gap-4 mt-10">
+    <div v-else class="flex flex-col gap-4 mt-10">
+      <CartListBasket v-if="totalPrice" />
+
       <div class="flex gap-4">
         <span>Total:</span>
         <div class="flex-1 border-b-2 border-dashed"></div>
