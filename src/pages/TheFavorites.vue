@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { inject, onMounted, ref } from 'vue'
 import CardList from '@/components/CardList.vue'
+import { cartBasket } from '@/cart'
 
 const { onClickAddCartBasket } = inject('cart')
 
@@ -13,6 +14,11 @@ onMounted(async () => {
       'https://bd1bfdbaf3f110ab.mokky.dev/favorites?_relations=items'
     )
     favorites.value = data.map((favorite) => favorite.item)
+
+    favorites.value = favorites.value.map((item) => ({
+      ...item,
+      isAdded: cartBasket.value.some((cartItem) => cartItem.id === item.id)
+    }))
   } catch (error) {
     console.error(error)
   }

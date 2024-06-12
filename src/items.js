@@ -1,6 +1,7 @@
 import axios from 'axios'
 import debounce from 'lodash.debounce'
 import { reactive, ref } from 'vue'
+import { cartBasket } from './cart'
 
 export const items = ref([])
 export const filters = reactive({
@@ -42,9 +43,10 @@ export const fetchItems = async () => {
       params.title = `*${filters.searchQuery}*`
     }
 
+    const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/items`, { params })
+
     const { data: favorites } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/favorites`)
 
-    const { data } = await axios.get(`https://bd1bfdbaf3f110ab.mokky.dev/items`, { params })
     items.value = data.map((item) => ({
       ...item,
       isFavorite: false,
@@ -52,7 +54,11 @@ export const fetchItems = async () => {
       isAdded: false
     }))
 
-    console.log(favorites)
+    items.value = items.value.map((item) => ({
+      ...item,
+      isAdded: cartBasket.value.some((cartItem) => cartItem.id === item.id),
+      isFavorite: favorites.some((favorite) => favorite.item_id === item.id)
+    }))
   } catch (error) {
     console.error(error)
   }
