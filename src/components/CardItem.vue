@@ -1,5 +1,5 @@
 <script setup>
-defineProps({
+const props = defineProps({
   id: Number,
   imageUrl: String,
   title: String,
@@ -9,6 +9,10 @@ defineProps({
   onClickFavotite: Function,
   onClickAdd: Function
 })
+
+const onLogId = () => {
+  console.log(props.id)
+}
 </script>
 
 <template>
@@ -23,7 +27,7 @@ defineProps({
       alt="like-1"
     />
 
-    <img class="w-48 m-auto" :src="imageUrl" alt="sneakers-1" />
+    <img class="w-48 m-auto" @click="onLogId" :src="imageUrl" alt="sneakers-1" />
 
     <p class="mb-10 text-xl mt-2">{{ title }}</p>
 
