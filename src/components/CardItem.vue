@@ -9,15 +9,11 @@ const props = defineProps({
   onClickFavotite: Function,
   onClickAdd: Function
 })
-
-const onLogId = () => {
-  console.log(props.id)
-}
 </script>
 
 <template>
   <div
-    class="relative border-2 border-slate-200 rounded-3xl p-8 cursor-pointer transition hover:transform hover:scale-105 hover:shadow-xl hover:border-slate-200"
+    class="relative border-2 border-slate-200 rounded-3xl p-8 transition hover:transform hover:scale-105 hover:shadow-xl hover:border-slate-200"
   >
     <img
       v-if="onClickFavotite"
@@ -27,7 +23,9 @@ const onLogId = () => {
       alt="like-1"
     />
 
-    <img class="w-48 m-auto" @click="onLogId" :src="imageUrl" alt="sneakers-1" />
+    <RouterLink :to="`/sneaker/${props.id}`">
+      <img class="w-48 m-auto cursor-pointer" :src="imageUrl" alt="sneakers-1" />
+    </RouterLink>
 
     <p class="mb-10 text-xl mt-2">{{ title }}</p>
 
