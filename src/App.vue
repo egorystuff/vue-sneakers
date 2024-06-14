@@ -9,7 +9,8 @@ import {
   closeDrawer,
   onClickAddCartBasket,
   addToFavorite,
-  drawerOpen
+  drawerOpen,
+  removeFromCartBasket
 } from './cart'
 
 watch(
@@ -20,7 +21,14 @@ watch(
   { deep: true }
 )
 
-provide('cart', { cartBasket, closeDrawer, openDrawer, onClickAddCartBasket, addToFavorite })
+provide('cart', {
+  cartBasket,
+  closeDrawer,
+  openDrawer,
+  onClickAddCartBasket,
+  addToFavorite,
+  removeFromCartBasket
+})
 
 // -----------------------------------------------------------------------------------------------
 </script>

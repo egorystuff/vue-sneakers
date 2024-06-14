@@ -26,6 +26,11 @@ onMounted(async () => {
     :price="item.price"
     :is-added="item.isAdded"
     :is-favorite="item.isFavorite"
+    :description="item.description"
+    :material="item.material"
+    :season="item.season"
+    :color="item.color"
+    :code="item.code"
   />
 
   <!-- <SneakerItem
