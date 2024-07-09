@@ -1,14 +1,8 @@
 <script setup>
 import { inject, onMounted, watch } from 'vue'
-import {
-  fetchFavorites,
-  fetchItems,
-  filters,
-  items,
-  onChangeSelect,
-  onChangeSearchInput
-} from '@/items'
+import { fetchFavorites, fetchItems, filters, items } from '@/items'
 import CardList from '../components/CardList.vue'
+import NavigationBar from '@/components/NavigationBar.vue'
 
 // -----------------------------------------------------------------------------------------------
 
@@ -44,31 +38,7 @@ watch(filters, fetchItems, () => {
 </script>
 
 <template>
-  <div class="flex justify-between items-center mb-10">
-    <h2 class="text-3xl font-bold">All sneakers</h2>
-
-    <div class="flex gap-4">
-      <select
-        @change="onChangeSelect"
-        class="border-2 border-slate-300 py-2 px-4 rounded-xl outline-none"
-      >
-        <option value="name">By name</option>
-        <option value="price">By price (cheap)</option>
-        <option value="-price">By price (expensive)</option>
-        <option value="rating">By rating</option>
-      </select>
-
-      <div class="relative">
-        <img class="absolute left-6 top-3" src="/search.svg" alt="search" />
-        <input
-          @input="onChangeSearchInput"
-          class="border-2 border-slate-300 rounded-xl pr-4 pl-12 py-2 outline-none focus:border-slate-400"
-          type="text"
-          placeholder="Search..."
-        />
-      </div>
-    </div>
-  </div>
+  <NavigationBar name="All Sneakers" />
 
   <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="onClickAddCartBasket" />
 </template>

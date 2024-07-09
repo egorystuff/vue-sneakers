@@ -1,8 +1,10 @@
 <script setup>
 import axios from 'axios'
-import { inject, onMounted, ref } from 'vue'
+import { inject, onMounted, ref, watch } from 'vue'
 import CardList from '@/components/CardList.vue'
 import { cartBasket } from '@/cart'
+import NavigationBar from '@/components/NavigationBar.vue'
+import { fetchItems, filters } from '@/items'
 
 const { onClickAddCartBasket } = inject('cart')
 
@@ -23,9 +25,17 @@ onMounted(async () => {
     console.error(error)
   }
 })
+
+// watch(filters, fetchItems, () => {
+//   favorites.value = favorites.value.map((item) => ({
+//     ...item,
+//     isAdded: cartBasket.value.some((cartItem) => cartItem.id === item.id)
+//   }))
+// })
 </script>
 
 <template>
-  <h2 class="text-3xl font-bold">All favorites</h2>
+  <NavigationBar name="Featured Sneakers" />
+
   <CardList :items="favorites" is-favorites @add-to-cart="onClickAddCartBasket" />
 </template>
